@@ -1,43 +1,303 @@
-Analise o cenário abaixo e desenvolva um sistema para atender à demanda solicitada.
-Seu programa deve seguir todos os conceitos da Programação Orientada a Objetos e
-implementá-los de forma correta. Leia com atenção todo o enunciado antes de iniciar.
-Valor: 20 pontos
-Critérios de Correção:
-• Aplicação correta dos conceitos de modularização e POO: 10,0 pontos.
-• Implementação correta das funcionalidades solicitadas: 6,0 pontos.
-• Interação com o usuário e boas práticas de programação: 4,0 pontos.
-Motivos que podem zerar sua prova:
-• O código não está em Java
-• O código não está orientado a objetos
-• O código é cópia de terceiros
-• Você acessou a internet durante a prova
-Cenário
-Uma empresa de eventos deseja informatizar o sistema de gerenciamento de salões e reser-
-vas.
-Cada organizador possui as seguintes informações: nome, CPF, telefone e área de atuação.
-Cada salão possui as seguintes informações: número, capacidade máxima de pessoas, loca-
-lização e tipo de salão.
-Cada salão está vinculado a um organizador responsável.
-Para cada reserva, devem ser armazenadas informações como: código, nome do cliente,
-data, horário (manhã, tarde ou noite), quantidade de convidados, status da reserva (soli-
-citada, confirmada, finalizada), valor total.
-Cada salão pode ter várias reservas confirmadas, contanto que estas reservas estejam em
-datas diferentes, ou na mesma data mas em horário diferente.
-1
-Funcionalidades do Sistema
-1. Associar um organizador a um salão
-2. Atribuir reserva a um salão
-3. Exibir todas as reservas confirmadas em um salão específico. Informe também o total
-de reservas ao final.
-4. Informar a quantidade total de reservas finalizadas para cada salão
-5. Buscar reservas por status. É necessário exibir os detalhes da reserva, incluindo salão
-e organizador.
-6. Exibir os detalhes completos de uma reserva específica
-Faça um método na classe main para criar 3 salões e 3 organizadores assim que o programa
-for executado (sem interação com o usuário).
-Regras de negócio
-1. Um organizador pode ser responsável por apenas um salão.
-2. Um salão pode possuir várias reservas, mas a reserva não depende do salão.
-3. Reservas com status ”solicitada” não possuem salão atribuído.
-4. Reservas com status ”finalizada” precisam manter a informação do salão utilizado.
-Porém, o salão não precisa manter a informação desta reserva.
+model/
+- Organizador.java
+- Salao.java
+- Reserva.java
+- StatusReserva.java
+- Periodo.java
+
+service/
+- SistemaEventos.java
+
+main/
+- Main.java
+
+public enum StatusReserva {
+    SOLICITADA,
+    CONFIRMADA,
+    FINALIZADA
+}
+
+public enum StatusReserva {
+    SOLICITADA,
+    CONFIRMADA,
+    FINALIZADA
+}
+
+
+public enum Periodo {
+    MANHA,
+    TARDE,
+    NOITE
+}
+
+public class Organizador {
+    private String nome;
+    private String cpf;
+    private String telefone;
+    private String areaAtuacao;
+    private Salao salao; // 1 organizador → 1 salão
+
+    public Organizador(String nome, String cpf, String telefone, String areaAtuacao) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.telefone = telefone;
+        this.areaAtuacao = areaAtuacao;
+    }
+
+    public String getNome() { return nome; }
+
+    public Salao getSalao() { return salao; }
+
+    public void setSalao(Salao salao) {
+        this.salao = salao;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " (" + areaAtuacao + ")";
+    }
+}
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Salao {
+    private int numero;
+    private int capacidade;
+    private String localizacao;
+    private String tipo;
+    private Organizador organizador;
+    private List<Reserva> reservas = new ArrayList<>();
+
+    public Salao(int numero, int capacidade, String localizacao, String tipo) {
+        this.numero = numero;
+        this.capacidade = capacidade;
+        this.localizacao = localizacao;
+        this.tipo = tipo;
+    }
+
+    public int getNumero() { return numero; }
+    public Organizador getOrganizador() { return organizador; }
+    public List<Reserva> getReservas() { return reservas; }
+
+    // Funcionalidade 1
+    public void associarOrganizador(Organizador o) {
+        if (o.getSalao() != null) {
+            System.out.println("Organizador já possui salão.");
+            return;
+        }
+        this.organizador = o;
+        o.setSalao(this);
+    }
+
+    // Funcionalidade 2
+    public void adicionarReserva(Reserva r) {
+
+        if (r.getStatus() != StatusReserva.SOLICITADA) {
+            System.out.println("Reserva inválida.");
+            return;
+        }
+
+        // verificar conflito de data + período
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva existente = reservas.get(i);
+
+            if (existente.getData().equals(r.getData()) &&
+                existente.getPeriodo() == r.getPeriodo()) {
+
+                System.out.println("Conflito de horário!");
+                return;
+            }
+        }
+
+        r.setSalao(this);
+        r.setStatus(StatusReserva.CONFIRMADA);
+        reservas.add(r);
+    }
+
+    // Funcionalidade 3
+    public void exibirReservasConfirmadas() {
+        int count = 0;
+
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+
+            if (r.getStatus() == StatusReserva.CONFIRMADA) {
+                System.out.println(r);
+                count++;
+            }
+        }
+
+        System.out.println("Total: " + count);
+    }
+
+    // Funcionalidade 4
+    public int contarFinalizadas(List<Reserva> todas) {
+        int count = 0;
+
+        for (int i = 0; i < todas.size(); i++) {
+            Reserva r = todas.get(i);
+
+            if (r.getStatus() == StatusReserva.FINALIZADA &&
+                r.getSalao() == this) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
+
+public class Reserva {
+    private String codigo;
+    private String cliente;
+    private String data;
+    private Periodo periodo;
+    private int convidados;
+    private StatusReserva status;
+    private double valor;
+    private Salao salao;
+
+    public Reserva(String codigo, String cliente, String data,
+                   Periodo periodo, int convidados, double valor) {
+        this.codigo = codigo;
+        this.cliente = cliente;
+        this.data = data;
+        this.periodo = periodo;
+        this.convidados = convidados;
+        this.valor = valor;
+        this.status = StatusReserva.SOLICITADA;
+    }
+
+    public String getCodigo() { return codigo; }
+    public String getData() { return data; }
+    public Periodo getPeriodo() { return periodo; }
+    public StatusReserva getStatus() { return status; }
+    public Salao getSalao() { return salao; }
+
+    public void setStatus(StatusReserva status) { this.status = status; }
+    public void setSalao(Salao salao) { this.salao = salao; }
+
+    @Override
+    public String toString() {
+        return "Reserva " + codigo +
+               " | Cliente: " + cliente +
+               " | Status: " + status;
+    }
+}
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SistemaEventos {
+
+    private List<Salao> saloes = new ArrayList<>();
+    private List<Reserva> reservas = new ArrayList<>();
+
+    public void addSalao(Salao s) { saloes.add(s); }
+    public void addReserva(Reserva r) { reservas.add(r); }
+
+    // Funcionalidade 4
+    public void relatorioFinalizadas() {
+        for (int i = 0; i < saloes.size(); i++) {
+            Salao s = saloes.get(i);
+
+            System.out.println("Salão " + s.getNumero() +
+                ": " + s.contarFinalizadas(reservas));
+        }
+    }
+
+    // Funcionalidade 5
+    public void buscarPorStatus(StatusReserva status) {
+
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+
+            if (r.getStatus() == status) {
+                System.out.println(r);
+
+                if (r.getSalao() != null) {
+                    System.out.println("Salão: " + r.getSalao().getNumero());
+
+                    if (r.getSalao().getOrganizador() != null) {
+                        System.out.println("Organizador: " +
+                            r.getSalao().getOrganizador());
+                    }
+                }
+            }
+        }
+    }
+
+    // Funcionalidade 6
+    public void detalhesReserva(String codigo) {
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+
+            if (r.getCodigo().equals(codigo)) {
+                System.out.println(r);
+                return;
+            }
+        }
+    }
+}
+
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        SistemaEventos sistema = new SistemaEventos();
+
+        // 🔥 Criar 3 organizadores
+        Organizador o1 = new Organizador("Carlos", "111", "999", "Casamentos");
+        Organizador o2 = new Organizador("Ana", "222", "888", "Festas");
+        Organizador o3 = new Organizador("Pedro", "333", "777", "Eventos");
+
+        // 🔥 Criar 3 salões
+        Salao s1 = new Salao(1, 200, "Centro", "Luxo");
+        Salao s2 = new Salao(2, 100, "Bairro", "Simples");
+        Salao s3 = new Salao(3, 300, "Zona Sul", "Premium");
+
+        sistema.addSalao(s1);
+        sistema.addSalao(s2);
+        sistema.addSalao(s3);
+
+        // Funcionalidade 1
+        s1.associarOrganizador(o1);
+        s2.associarOrganizador(o2);
+        s3.associarOrganizador(o3);
+
+        // Criar reservas
+        Reserva r1 = new Reserva("R1", "João", "10/05", Periodo.MANHA, 50, 1000);
+        Reserva r2 = new Reserva("R2", "Maria", "10/05", Periodo.TARDE, 80, 2000);
+        Reserva r3 = new Reserva("R3", "Lucas", "11/05", Periodo.NOITE, 120, 3000);
+
+        sistema.addReserva(r1);
+        sistema.addReserva(r2);
+        sistema.addReserva(r3);
+
+        // Funcionalidade 2
+        s1.adicionarReserva(r1);
+        s1.adicionarReserva(r2);
+        s2.adicionarReserva(r3);
+
+        // Funcionalidade 3
+        s1.exibirReservasConfirmadas();
+
+        // Finalizar
+        r1.setStatus(StatusReserva.FINALIZADA);
+
+        // Funcionalidade 4
+        sistema.relatorioFinalizadas();
+
+        // Funcionalidade 5
+        sistema.buscarPorStatus(StatusReserva.CONFIRMADA);
+
+        // Funcionalidade 6
+        sistema.detalhesReserva("R1");
+    }
+}
+
+
+
+
