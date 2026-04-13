@@ -323,3 +323,70 @@ EstudosEventos/
 ├── lib/            (opcional)
 ├── bin/ ou out/    (gerado automaticamente)
 └── .vscode/
+
+
+
+package main;
+
+import model.*;
+import service.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        SistemaEventos sistema = new SistemaEventos();
+
+        // 🔥 Criar 3 organizadores
+        Organizador o1 = new Organizador("Carlos", "111", "999", "Casamentos");
+        Organizador o2 = new Organizador("Ana", "222", "888", "Festas");
+        Organizador o3 = new Organizador("Pedro", "333", "777", "Eventos");
+
+        // 🔥 Criar 3 salões
+        Salao s1 = new Salao(1, 200, "Centro", "Luxo");
+        Salao s2 = new Salao(2, 100, "Bairro", "Simples");
+        Salao s3 = new Salao(3, 300, "Zona Sul", "Premium");
+
+        sistema.addSalao(s1);
+        sistema.addSalao(s2);
+        sistema.addSalao(s3);
+
+        // 🔥 Funcionalidade 1: Associar organizadores
+        s1.associarOrganizador(o1);
+        s2.associarOrganizador(o2);
+        s3.associarOrganizador(o3);
+
+        // 🔥 Criar reservas
+        Reserva r1 = new Reserva("R1", "João", "10/05", Periodo.MANHA, 50, 1000);
+        Reserva r2 = new Reserva("R2", "Maria", "10/05", Periodo.TARDE, 80, 2000);
+        Reserva r3 = new Reserva("R3", "Lucas", "11/05", Periodo.NOITE, 120, 3000);
+
+        sistema.addReserva(r1);
+        sistema.addReserva(r2);
+        sistema.addReserva(r3);
+
+        // 🔥 Funcionalidade 2: Atribuir reservas
+        s1.adicionarReserva(r1);
+        s1.adicionarReserva(r2);
+        s2.adicionarReserva(r3);
+
+        // 🔥 Funcionalidade 3
+        System.out.println("\n=== Reservas confirmadas no Salão 1 ===");
+        s1.exibirReservasConfirmadas();
+
+        // 🔥 Finalizar algumas reservas
+        r1.setStatus(StatusReserva.FINALIZADA);
+
+        // 🔥 Funcionalidade 4
+        System.out.println("\n=== Relatório de finalizadas ===");
+        sistema.relatorioFinalizadas();
+
+        // 🔥 Funcionalidade 5
+        System.out.println("\n=== Buscar por status CONFIRMADA ===");
+        sistema.buscarPorStatus(StatusReserva.CONFIRMADA);
+
+        // 🔥 Funcionalidade 6
+        System.out.println("\n=== Detalhes da reserva R1 ===");
+        sistema.detalhesReserva("R1");
+    }
+}
