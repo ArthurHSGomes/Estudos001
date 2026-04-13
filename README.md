@@ -11,11 +11,7 @@ service/
 main/
 - Main.java
 
-public enum StatusReserva {
-    SOLICITADA,
-    CONFIRMADA,
-    FINALIZADA
-}
+//statusreserva.java
 
 public enum StatusReserva {
     SOLICITADA,
@@ -23,6 +19,7 @@ public enum StatusReserva {
     FINALIZADA
 }
 
+//periodo.java
 
 public enum Periodo {
     MANHA,
@@ -30,6 +27,7 @@ public enum Periodo {
     NOITE
 }
 
+//organizador.java
 public class Organizador {
     private String nome;
     private String cpf;
@@ -57,6 +55,7 @@ public class Organizador {
         return nome + " (" + areaAtuacao + ")";
     }
 }
+//salao.java
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +147,8 @@ public class Salao {
     }
 }
 
+//reserva.java
+
 public class Reserva {
     private String codigo;
     private String cliente;
@@ -185,6 +186,8 @@ public class Reserva {
                " | Status: " + status;
     }
 }
+
+//sistemaeventos.java
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,6 +244,7 @@ public class SistemaEventos {
     }
 }
 
+//main.java
 
 public class Main {
 
