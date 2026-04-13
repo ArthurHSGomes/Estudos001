@@ -304,4 +304,22 @@ public class Main {
 
 
 
-
+EstudosEventos/
+│
+├── src/
+│   ├── model/
+│   │   ├── Organizador.java
+│   │   ├── Salao.java
+│   │   ├── Reserva.java
+│   │   ├── StatusReserva.java
+│   │   └── Periodo.java
+│   │
+│   ├── service/
+│   │   └── SistemaEventos.java
+│   │
+│   └── main/
+│       └── Main.java
+│
+├── lib/            (opcional)
+├── bin/ ou out/    (gerado automaticamente)
+└── .vscode/
