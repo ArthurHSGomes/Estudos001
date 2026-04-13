@@ -1,177 +1,43 @@
-# Estudos001 
-
-public enum StatusEntrega {
-    PENDENTE,
-    ATRIBUIDA,
-    FINALIZADA
-}
-
-//rota.java
-public class Rota {
-    private String origem;
-    private String destino;
-    private double distanciaTotal;
-    private double tempoEstimado;
-
-    public Rota(String origem, String destino, double distanciaTotal, double tempoEstimado) {
-        this.origem = origem;
-        this.destino = destino;
-        this.distanciaTotal = distanciaTotal;
-        this.tempoEstimado = tempoEstimado;
-    }
-
-    public String getOrigem() { return origem; }
-    public String getDestino() { return destino; }
-
-    @Override
-    public String toString() {
-        return origem + " -> " + destino + " (" + distanciaTotal + "km, " + tempoEstimado + "h)";
-    }
-}
-
-//motorista.java
-
-public class Motorista {
-    private String nome;
-    private String cpf;
-    private String categoriaCNH;
-    private String telefone;
-
-    public Motorista(String nome, String cpf, String categoriaCNH, String telefone) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.categoriaCNH = categoriaCNH;
-        this.telefone = telefone;
-    }
-
-    public String getNome() { return nome; }
-
-    @Override
-    public String toString() {
-        return nome + " (CNH: " + categoriaCNH + ")";
-    }
-}
-
-
-//entrega.java
-
-public class Entrega {
-    private String codigo;
-    private String destinatario;
-    private String endereco;
-    private String data;
-    private double peso;
-    private StatusEntrega status;
-    private Rota rota;
-    private Veiculo veiculo;
-
-    public Entrega(String codigo, String destinatario, String endereco,
-                   String data, double peso, Rota rota) {
-        this.codigo = codigo;
-        this.destinatario = destinatario;
-        this.endereco = endereco;
-        this.data = data;
-        this.peso = peso;
-        this.rota = rota;
-        this.status = StatusEntrega.PENDENTE;
-    }
-
-    public String getCodigo() { return codigo; }
-    public StatusEntrega getStatus() { return status; }
-    public Veiculo getVeiculo() { return veiculo; }
-
-    public void setStatus(StatusEntrega status) { this.status = status; }
-    public void setVeiculo(Veiculo veiculo) { this.veiculo = veiculo; }
-
-    @Override
-    public String toString() {
-        return "Entrega " + codigo +
-               " | " + destinatario +
-               " | Status: " + status +
-               " | Veículo: " + (veiculo != null ? veiculo.getPlaca() : "nenhum");
-    }
-}
-
-//veiculo.java
-
-public void listarEntregas() {
-    for (int i = 0; i < entregas.size(); i++) {
-        System.out.println(entregas.get(i));
-    }
-}
-
-//sistemalogistica.java
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class SistemaLogistica {
-    private List<Veiculo> veiculos = new ArrayList<>();
-    private List<Entrega> entregas = new ArrayList<>();
-
-    public void addVeiculo(Veiculo v) { veiculos.add(v); }
-    public void addEntrega(Entrega e) { entregas.add(e); }
-
-    public void buscarPorStatus(StatusEntrega status) {
-        System.out.println("\n=== Entregas com status: " + status + " ===");
-
-        boolean encontrou = false;
-
-        for (int i = 0; i < entregas.size(); i++) {
-            Entrega e = entregas.get(i);
-
-            if (e.getStatus() == status) {
-                System.out.println(e);
-                encontrou = true;
-            }
-        }
-
-        if (!encontrou) {
-            System.out.println("Nenhuma entrega encontrada.");
-        }
-    }
-
-    public void relatorio() {
-        for (int i = 0; i < veiculos.size(); i++) {
-            Veiculo v = veiculos.get(i);
-
-            System.out.println(v.getPlaca() + ": " +
-                v.contarFinalizadas(entregas) + " finalizadas");
-        }
-    }
-}
-
-//main.java
-
-public class Main {
-    public static void main(String[] args) {
-
-        SistemaLogistica sistema = new SistemaLogistica();
-
-        Motorista m1 = new Motorista("Carlos", "111", "C", "999");
-        Veiculo v1 = new Veiculo("ABC-1234", "Van");
-
-        v1.associarMotorista(m1);
-        sistema.addVeiculo(v1);
-
-        Rota r = new Rota("BH", "SP", 500, 6);
-
-        Entrega e1 = new Entrega("E001", "João", "SP", "2026", 100, r);
-        sistema.addEntrega(e1);
-
-        v1.atribuirEntrega(e1);
-        v1.listarEntregas();
-
-        v1.finalizarEntrega(e1);
-
-        sistema.relatorio();
-        sistema.buscarPorStatus(StatusEntrega.FINALIZADA);
-    }
-}
-
-
-
-
-
-
-
+Analise o cenário abaixo e desenvolva um sistema para atender à demanda solicitada.
+Seu programa deve seguir todos os conceitos da Programação Orientada a Objetos e
+implementá-los de forma correta. Leia com atenção todo o enunciado antes de iniciar.
+Valor: 20 pontos
+Critérios de Correção:
+• Aplicação correta dos conceitos de modularização e POO: 10,0 pontos.
+• Implementação correta das funcionalidades solicitadas: 6,0 pontos.
+• Interação com o usuário e boas práticas de programação: 4,0 pontos.
+Motivos que podem zerar sua prova:
+• O código não está em Java
+• O código não está orientado a objetos
+• O código é cópia de terceiros
+• Você acessou a internet durante a prova
+Cenário
+Uma empresa de eventos deseja informatizar o sistema de gerenciamento de salões e reser-
+vas.
+Cada organizador possui as seguintes informações: nome, CPF, telefone e área de atuação.
+Cada salão possui as seguintes informações: número, capacidade máxima de pessoas, loca-
+lização e tipo de salão.
+Cada salão está vinculado a um organizador responsável.
+Para cada reserva, devem ser armazenadas informações como: código, nome do cliente,
+data, horário (manhã, tarde ou noite), quantidade de convidados, status da reserva (soli-
+citada, confirmada, finalizada), valor total.
+Cada salão pode ter várias reservas confirmadas, contanto que estas reservas estejam em
+datas diferentes, ou na mesma data mas em horário diferente.
+1
+Funcionalidades do Sistema
+1. Associar um organizador a um salão
+2. Atribuir reserva a um salão
+3. Exibir todas as reservas confirmadas em um salão específico. Informe também o total
+de reservas ao final.
+4. Informar a quantidade total de reservas finalizadas para cada salão
+5. Buscar reservas por status. É necessário exibir os detalhes da reserva, incluindo salão
+e organizador.
+6. Exibir os detalhes completos de uma reserva específica
+Faça um método na classe main para criar 3 salões e 3 organizadores assim que o programa
+for executado (sem interação com o usuário).
+Regras de negócio
+1. Um organizador pode ser responsável por apenas um salão.
+2. Um salão pode possuir várias reservas, mas a reserva não depende do salão.
+3. Reservas com status ”solicitada” não possuem salão atribuído.
+4. Reservas com status ”finalizada” precisam manter a informação do salão utilizado.
+Porém, o salão não precisa manter a informação desta reserva.
