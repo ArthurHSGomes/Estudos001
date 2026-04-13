@@ -390,3 +390,53 @@ public class Main {
         sistema.detalhesReserva("R1");
     }
 }
+
+
+package service;
+
+import model.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SistemaEventos {
+
+    private List<Salao> saloes = new ArrayList<>();
+    private List<Reserva> reservas = new ArrayList<>();
+
+    public void addSalao(Salao s) {
+        saloes.add(s);
+    }
+
+    public void addReserva(Reserva r) {
+        reservas.add(r);
+    }
+
+    public void relatorioFinalizadas() {
+        for (int i = 0; i < saloes.size(); i++) {
+            Salao s = saloes.get(i);
+            System.out.println("Salão " + s.getNumero() + ": " +
+                s.contarFinalizadas(reservas));
+        }
+    }
+
+    public void buscarPorStatus(StatusReserva status) {
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+
+            if (r.getStatus() == status) {
+                System.out.println(r);
+            }
+        }
+    }
+
+    public void detalhesReserva(String codigo) {
+        for (int i = 0; i < reservas.size(); i++) {
+            Reserva r = reservas.get(i);
+
+            if (r.getCodigo().equals(codigo)) {
+                System.out.println(r);
+                return;
+            }
+        }
+    }
+}
